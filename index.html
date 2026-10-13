@@ -34,7 +34,11 @@
     .btn:active { background-color: #1565c0; transform: scale(0.98); }
     .btn-stop { background-color: #e53935; width: 90%; max-width: 370px; }
     .btn-stop:active { background-color: #c62828; }
-    .btn-conn { background-color: #00c853; width: 90%; max-width: 370px; margin-bottom: 15px; }
+    
+    .btn-conn { background-color: #00c853; width: 44%; max-width: 180px; margin-bottom: 15px; }
+    .btn-conn:active { background-color: #009624; }
+    .btn-disconn { background-color: #d32f2f; width: 44%; max-width: 180px; margin-bottom: 15px; }
+    .btn-disconn:active { background-color: #b71c1c; }
 
     .card {
       background: #1e1e1e;
@@ -56,7 +60,10 @@
   <h1>Perro Robot Control</h1>
   <div id="status" class="status">Desconectado</div>
   
-  <button class="btn btn-conn" onclick="conectarBLE()">Conectar Bluetooth</button>
+  <div>
+    <button class="btn btn-conn" onclick="conectarBLE()">Conectar</button>
+    <button class="btn btn-disconn" onclick="desconectarBLE()">Desconectar</button>
+  </div>
 
   <div class="card">
     <h2>Parada de Emergencia</h2>
@@ -132,10 +139,19 @@
       }
     }
 
+    function desconectarBLE() {
+      if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+        bluetoothDevice.gatt.disconnect();
+      } else {
+        alert("No hay ningún dispositivo conectado actualmente.");
+      }
+    }
+
     function onDisconnected() {
       const statusDiv = document.getElementById('status');
       statusDiv.innerText = "Desconectado";
       statusDiv.classList.remove("connected");
+      rxCharacteristic = null;
     }
 
     async function enviar(cmd) {
