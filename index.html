@@ -39,6 +39,8 @@
     .btn-conn:active { background-color: #009624; }
     .btn-disconn { background-color: #d32f2f; width: 44%; max-width: 180px; margin-bottom: 15px; }
     .btn-disconn:active { background-color: #b71c1c; }
+    .btn-confirm { background-color: #ff9800; width: 90%; max-width: 370px; margin-top: 10px; color: #000; }
+    .btn-confirm:active { background-color: #f57c00; }
 
     .card {
       background: #1e1e1e;
@@ -52,7 +54,12 @@
     
     .slider-group { margin: 12px 0; text-align: left; }
     .slider-group label { display: block; font-size: 0.9rem; margin-bottom: 4px; }
-    input[type=range] { width: 100%; }
+    .slider-group span.val-highlight { color: #00e676; font-weight: bold; }
+    input[type=range], input[type=number] { width: 100%; box-sizing: border-box; }
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; }
+    .grid-2 label { font-size: 0.85rem; }
+    .grid-2 input { padding: 8px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 0.95rem; }
   </style>
 </head>
 <body>
@@ -68,6 +75,57 @@
   <div class="card">
     <h2>Parada de Emergencia</h2>
     <button class="btn btn-stop" onclick="enviar('0')">¡DETENER TODO!</button>
+  </div>
+
+  <!-- TARJETA DE CALIBRACIÓN / CENTROS -->
+  <div class="card">
+    <h2>Calibración de Centros (Offsets)</h2>
+    <div class="grid-2">
+      <div>
+        <label>Centro Cola (°):</label>
+        <input type="number" id="cCola" value="90" min="0" max="180">
+      </div>
+      <div>
+        <label>Centro Cuello (°):</label>
+        <input type="number" id="cCuello" value="120" min="0" max="180">
+      </div>
+      <div>
+        <label>Centro Cabeza 1 (S3):</label>
+        <input type="number" id="cS3" value="85" min="0" max="180">
+      </div>
+      <div>
+        <label>Centro Cabeza 2 (S4):</label>
+        <input type="number" id="cS4" value="95" min="0" max="180">
+      </div>
+    </div>
+    <button class="btn btn-confirm" onclick="confirmarCentro()">Confirmar Centro</button>
+  </div>
+
+  <!-- TARJETA DE MODO MANUAL RELATIVO -->
+  <div class="card">
+    <h2>Giro Manual (Relativo al Centro)</h2>
+    
+    <div class="slider-group">
+      <label>Cola: <span id="vCola" class="val-highlight">0°</span> <small id="vColaAbs">(Abs: 90°)</small></label>
+      <input type="range" id="sCola" value="0" oninput="actualizarLabelCola()">
+    </div>
+
+    <div class="slider-group">
+      <label>Cuello: <span id="vCuello" class="val-highlight">0°</span> <small id="vCuelloAbs">(Abs: 120°)</small></label>
+      <input type="range" id="sCuello" value="0" oninput="actualizarLabelCuello()">
+    </div>
+
+    <div class="slider-group">
+      <label>Pitch (Inclinación): <span id="vPitch" class="val-highlight">0°</span> <small id="vPitchAbs">(Abs: 90°)</small></label>
+      <input type="range" id="sPitch" min="-30" max="30" value="0" oninput="actualizarLabelPitch()">
+    </div>
+
+    <div class="slider-group">
+      <label>Roll (Giro): <span id="vRoll" class="val-highlight">0°</span> <small id="vRollAbs">(Abs: 90°)</small></label>
+      <input type="range" id="sRoll" min="-30" max="30" value="0" oninput="actualizarLabelRoll()">
+    </div>
+
+    <button class="btn" style="width: 90%; margin-top: 10px;" onclick="enviarManual()">Enviar Posición Manual</button>
   </div>
 
   <div class="card">
@@ -87,33 +145,84 @@
     <button class="btn" style="width: 90%; margin-top: 8px;" onclick="enviar('0ladear')">Centrar Cabeza (90°)</button>
   </div>
 
-  <div class="card">
-    <h2>Modo Manual</h2>
-    <div class="slider-group">
-      <label>Cola: <span id="vCola">90</span>°</label>
-      <input type="range" id="sCola" min="20" max="160" value="90" oninput="vCola.innerText=this.value">
-    </div>
-    <div class="slider-group">
-      <label>Cuello: <span id="vCuello">120</span>°</label>
-      <input type="range" id="sCuello" min="90" max="150" value="120" oninput="vCuello.innerText=this.value">
-    </div>
-    <div class="slider-group">
-      <label>Pitch (Inclinación): <span id="vPitch">90</span>°</label>
-      <input type="range" id="sPitch" min="60" max="120" value="90" oninput="vPitch.innerText=this.value">
-    </div>
-    <div class="slider-group">
-      <label>Roll (Giro): <span id="vRoll">90</span>°</label>
-      <input type="range" id="sRoll" min="60" max="120" value="90" oninput="vRoll.innerText=this.value">
-    </div>
-    <button class="btn" style="width: 90%; margin-top: 10px;" onclick="enviarManual()">Enviar Posición Manual</button>
-  </div>
-
   <script>
     const SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
     const CHARACTERISTIC_RX_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 
     let bluetoothDevice;
     let rxCharacteristic;
+
+    // Centros activos registrados
+    let centroCola = 90;
+    let centroCuello = 120;
+    let centroS3 = 85;
+    let centroS4 = 95;
+
+    window.onload = function() {
+      recalcularLimitesSliders();
+    };
+
+    function recalcularLimitesSliders() {
+      // Sliders se recalculan para que centro sea 0° y los extremos abarquen 0° a 180°
+      const sCola = document.getElementById('sCola');
+      sCola.min = 0 - centroCola;
+      sCola.max = 180 - centroCola;
+      sCola.value = 0;
+
+      const sCuello = document.getElementById('sCuello');
+      sCuello.min = 0 - centroCuello;
+      sCuello.max = 180 - centroCuello;
+      sCuello.value = 0;
+
+      document.getElementById('sPitch').value = 0;
+      document.getElementById('sRoll').value = 0;
+
+      actualizarLabelCola();
+      actualizarLabelCuello();
+      actualizarLabelPitch();
+      actualizarLabelRoll();
+    }
+
+    function actualizarLabelCola() {
+      const rel = parseInt(document.getElementById('sCola').value);
+      const abs = centroCola + rel;
+      document.getElementById('vCola').innerText = (rel > 0 ? "+" + rel : rel) + "°";
+      document.getElementById('vColaAbs').innerText = `(Abs: ${abs}°)`;
+    }
+
+    function actualizarLabelCuello() {
+      const rel = parseInt(document.getElementById('sCuello').value);
+      const abs = centroCuello + rel;
+      document.getElementById('vCuello').innerText = (rel > 0 ? "+" + rel : rel) + "°";
+      document.getElementById('vCuelloAbs').innerText = `(Abs: ${abs}°)`;
+    }
+
+    function actualizarLabelPitch() {
+      const rel = parseInt(document.getElementById('sPitch').value);
+      const abs = 90 + rel;
+      document.getElementById('vPitch').innerText = (rel > 0 ? "+" + rel : rel) + "°";
+      document.getElementById('vPitchAbs').innerText = `(Abs: ${abs}°)`;
+    }
+
+    function actualizarLabelRoll() {
+      const rel = parseInt(document.getElementById('sRoll').value);
+      const abs = 90 + rel;
+      document.getElementById('vRoll').innerText = (rel > 0 ? "+" + rel : rel) + "°";
+      document.getElementById('vRollAbs').innerText = `(Abs: ${abs}°)`;
+    }
+
+    function confirmarCentro() {
+      centroCola = parseInt(document.getElementById('cCola').value) || 90;
+      centroCuello = parseInt(document.getElementById('cCuello').value) || 120;
+      centroS3 = parseInt(document.getElementById('cS3').value) || 85;
+      centroS4 = parseInt(document.getElementById('cS4').value) || 95;
+
+      recalcularLimitesSliders();
+
+      // Enviar comando especial al ESP32
+      const cmd = `center,${centroCola},${centroCuello},${centroS3},${centroS4}`;
+      enviar(cmd);
+    }
 
     async function conectarBLE() {
       try {
@@ -168,11 +277,17 @@
     }
 
     function enviarManual() {
-      const cola = document.getElementById('sCola').value;
-      const cuello = document.getElementById('sCuello').value;
-      const pitch = document.getElementById('sPitch').value;
-      const roll = document.getElementById('sRoll').value;
-      const cmd = `${cola},${cuello},${pitch},${roll},30`;
+      const relCola = parseInt(document.getElementById('sCola').value);
+      const relCuello = parseInt(document.getElementById('sCuello').value);
+      const relPitch = parseInt(document.getElementById('sPitch').value);
+      const relRoll = parseInt(document.getElementById('sRoll').value);
+
+      const absCola = centroCola + relCola;
+      const absCuello = centroCuello + relCuello;
+      const absPitch = 90 + relPitch;
+      const absRoll = 90 + relRoll;
+
+      const cmd = `${absCola},${absCuello},${absPitch},${absRoll},30`;
       enviar(cmd);
     }
   </script>
