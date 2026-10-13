@@ -49,9 +49,41 @@
       margin: 10px auto;
       max-width: 400px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      box-sizing: border-box;
     }
     .card h2 { font-size: 1.1rem; color: #bb86fc; margin-top: 0; }
     
+    /* ESTILOS PARA LOS DESPLEGABLES */
+    details.card {
+      text-align: left;
+    }
+    details.card summary {
+      font-size: 1.1rem;
+      color: #bb86fc;
+      font-weight: bold;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      outline: none;
+      user-select: none;
+    }
+    details.card summary::-webkit-details-marker { display: none; }
+    details.card summary::after {
+      content: '▼';
+      font-size: 0.8rem;
+      color: #00e676;
+      transition: transform 0.2s ease;
+    }
+    details[open] summary::after {
+      transform: rotate(180deg);
+    }
+    .panel-body {
+      margin-top: 15px;
+      text-align: center;
+    }
+
     .slider-group { margin: 12px 0; text-align: left; }
     .slider-group label { display: block; font-size: 0.9rem; margin-bottom: 4px; }
     .slider-group span.val-highlight { color: #00e676; font-weight: bold; }
@@ -77,57 +109,6 @@
     <button class="btn btn-stop" onclick="enviar('0')">¡DETENER TODO!</button>
   </div>
 
-  <!-- TARJETA DE CALIBRACIÓN / CENTROS -->
-  <div class="card">
-    <h2>Calibración de Centros (Offsets)</h2>
-    <div class="grid-2">
-      <div>
-        <label>Centro Cola (°):</label>
-        <input type="number" id="cCola" value="90" min="0" max="180">
-      </div>
-      <div>
-        <label>Centro Cuello (°):</label>
-        <input type="number" id="cCuello" value="120" min="0" max="180">
-      </div>
-      <div>
-        <label>Centro Cabeza 1 (S3):</label>
-        <input type="number" id="cS3" value="85" min="0" max="180">
-      </div>
-      <div>
-        <label>Centro Cabeza 2 (S4):</label>
-        <input type="number" id="cS4" value="95" min="0" max="180">
-      </div>
-    </div>
-    <button class="btn btn-confirm" onclick="confirmarCentro()">Confirmar Centro</button>
-  </div>
-
-  <!-- TARJETA DE MODO MANUAL RELATIVO -->
-  <div class="card">
-    <h2>Giro Manual (Relativo al Centro)</h2>
-    
-    <div class="slider-group">
-      <label>Cola: <span id="vCola" class="val-highlight">0°</span> <small id="vColaAbs">(Abs: 90°)</small></label>
-      <input type="range" id="sCola" value="0" oninput="actualizarLabelCola()">
-    </div>
-
-    <div class="slider-group">
-      <label>Cuello: <span id="vCuello" class="val-highlight">0°</span> <small id="vCuelloAbs">(Abs: 120°)</small></label>
-      <input type="range" id="sCuello" value="0" oninput="actualizarLabelCuello()">
-    </div>
-
-    <div class="slider-group">
-      <label>Pitch (Inclinación): <span id="vPitch" class="val-highlight">0°</span> <small id="vPitchAbs">(Abs: 90°)</small></label>
-      <input type="range" id="sPitch" min="-30" max="30" value="0" oninput="actualizarLabelPitch()">
-    </div>
-
-    <div class="slider-group">
-      <label>Roll (Giro): <span id="vRoll" class="val-highlight">0°</span> <small id="vRollAbs">(Abs: 90°)</small></label>
-      <input type="range" id="sRoll" min="-30" max="30" value="0" oninput="actualizarLabelRoll()">
-    </div>
-
-    <button class="btn" style="width: 90%; margin-top: 10px;" onclick="enviarManual()">Enviar Posición Manual</button>
-  </div>
-
   <div class="card">
     <h2>Animaciones Continuas</h2>
     <button class="btn" onclick="enviar('cola')">Cola ON</button>
@@ -144,6 +125,60 @@
     <button class="btn" onclick="enviar('ladeard')">Ladear Der (103°)</button><br>
     <button class="btn" style="width: 90%; margin-top: 8px;" onclick="enviar('0ladear')">Centrar Cabeza (90°)</button>
   </div>
+
+  <!-- SECCIÓN DESPLEGABLE: CALIBRACIÓN DE CENTROS -->
+  <details class="card">
+    <summary>⚙️ Calibración de Centros (Offsets)</summary>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div>
+          <label>Centro Cola (°):</label>
+          <input type="number" id="cCola" value="90" min="0" max="180">
+        </div>
+        <div>
+          <label>Centro Cuello (°):</label>
+          <input type="number" id="cCuello" value="120" min="0" max="180">
+        </div>
+        <div>
+          <label>Centro Cabeza 1 (S3):</label>
+          <input type="number" id="cS3" value="85" min="0" max="180">
+        </div>
+        <div>
+          <label>Centro Cabeza 2 (S4):</label>
+          <input type="number" id="cS4" value="95" min="0" max="180">
+        </div>
+      </div>
+      <button class="btn btn-confirm" onclick="confirmarCentro()">Confirmar Centro</button>
+    </div>
+  </details>
+
+  <!-- SECCIÓN DESPLEGABLE: MODO MANUAL RELATIVO -->
+  <details class="card">
+    <summary>🎛️ Giro Manual (Relativo)</summary>
+    <div class="panel-body">
+      <div class="slider-group">
+        <label>Cola: <span id="vCola" class="val-highlight">0°</span> <small id="vColaAbs">(Abs: 90°)</small></label>
+        <input type="range" id="sCola" value="0" oninput="actualizarLabelCola()">
+      </div>
+
+      <div class="slider-group">
+        <label>Cuello: <span id="vCuello" class="val-highlight">0°</span> <small id="vCuelloAbs">(Abs: 120°)</small></label>
+        <input type="range" id="sCuello" value="0" oninput="actualizarLabelCuello()">
+      </div>
+
+      <div class="slider-group">
+        <label>Pitch (Inclinación): <span id="vPitch" class="val-highlight">0°</span> <small id="vPitchAbs">(Abs: 90°)</small></label>
+        <input type="range" id="sPitch" min="-30" max="30" value="0" oninput="actualizarLabelPitch()">
+      </div>
+
+      <div class="slider-group">
+        <label>Roll (Giro): <span id="vRoll" class="val-highlight">0°</span> <small id="vRollAbs">(Abs: 90°)</small></label>
+        <input type="range" id="sRoll" min="-30" max="30" value="0" oninput="actualizarLabelRoll()">
+      </div>
+
+      <button class="btn" style="width: 90%; margin-top: 10px;" onclick="enviarManual()">Enviar Posición Manual</button>
+    </div>
+  </details>
 
   <script>
     const SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
@@ -163,7 +198,6 @@
     };
 
     function recalcularLimitesSliders() {
-      // Sliders se recalculan para que centro sea 0° y los extremos abarquen 0° a 180°
       const sCola = document.getElementById('sCola');
       sCola.min = 0 - centroCola;
       sCola.max = 180 - centroCola;
@@ -219,7 +253,6 @@
 
       recalcularLimitesSliders();
 
-      // Enviar comando especial al ESP32
       const cmd = `center,${centroCola},${centroCuello},${centroS3},${centroS4}`;
       enviar(cmd);
     }
