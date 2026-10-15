@@ -88,7 +88,7 @@
     .instructions-list {
       text-align: left;
       padding-left: 20px;
-      margin: 12px 0 5px 0;
+      margin: 12px 0 10px 0;
       color: #d1d1d1;
       font-size: 0.9rem;
       line-height: 1.5;
@@ -98,6 +98,18 @@
     }
     .instructions-list strong {
       color: #00e676;
+    }
+
+    .note-box {
+      background: #2a2a2a;
+      border-left: 4px solid #ff9800;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #e0e0e0;
+      text-align: left;
+      margin-top: 12px;
+      line-height: 1.4;
     }
 
     .slider-group { margin: 12px 0; text-align: left; }
@@ -125,13 +137,19 @@
     <summary>📋 Instrucciones de Uso</summary>
     <div class="panel-body">
       <ol class="instructions-list">
-        <li><strong>Conexión:</strong> Presionar el botón de <em>Conectar</em> y seleccionar el dispositivo (<strong>PerroRobot_ESP32</strong>).</li>
-        <li><strong>Animaciones:</strong> Presionar la animación deseada en la sección de <em>Animaciones Continuas</em> (pueden estar varias activas simultáneamente).</li>
+        <li><strong>Conectar:</strong> Presionar el botón de <em>Conectar</em> y seleccionar el dispositivo (<strong>PerroRobot_ESP32</strong>). <em>Nota: Solo un dispositivo (celular, tablet o computador) puede estar conectado al tiempo al perro.</em></li>
+        <li><strong>Desconectar:</strong> El botón de <em>Desconectar</em> sirve para desvincular el Bluetooth del perro de forma limpia y permitir que otro equipo se conecte.</li>
+        <li><strong>Parada de Emergencia:</strong> El botón rojo de <em>¡DETENER TODO!</em> sirve para frenar inmediatamente todas las animaciones y movimientos en ejecución.</li>
+        <li><strong>Animaciones Continuas:</strong> Presionar la animación deseada en su respectiva sección (pueden estar varias activas simultáneamente).</li>
         <li><strong>Detener Animación:</strong> El botón <em>OFF</em> sirve para detener únicamente la animación seleccionada.</li>
         <li><strong>Ladear Cabeza:</strong> Si se desea que la cabeza se incline lateralmente, presionar alguno de los dos botones de <em>Ladear (IZQ. o DER.)</em>.</li>
-        <li><strong>Centrar Cabeza:</strong> Para volver a centrar la cabeza a su posición neutra, presionar el botón <em>Centrar Cabeza</em>.</li>
-        <li><strong>Mantenimiento:</strong> Las secciones de <em>Calibración de Centro (Offsets)</em> y <em>Giro Manual (Relativo)</em> son opciones avanzadas reservadas para casos de mantenimiento y ajustes finos.</li>
+        <li><strong>Centrar Cabeza:</strong> Para volver la cabeza a su posición neutra, presionar el botón <em>Centrar Cabeza</em>.</li>
+        <li><strong>Mantenimiento:</strong> Las secciones de <em>Calibración de Centro (Offsets)</em> y <em>Giro Manual (Relativo)</em> son opciones avanzadas reservadas para mantenimiento y ajustes finos.</li>
       </ol>
+
+      <div class="note-box">
+        💡 <strong>Requisitos de funcionamiento:</strong> Solo necesitas conexión a Internet / Wi-Fi para abrir o cargar esta aplicación web. Además, asegúrate de que el perro esté conectado mediante su cable de alimentación a un enchufe o fuente de poder externa de 5V.
+      </div>
     </div>
   </details>
 
