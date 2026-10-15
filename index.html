@@ -84,6 +84,22 @@
       text-align: center;
     }
 
+    /* ESTILOS DE INSTRUCCIONES */
+    .instructions-list {
+      text-align: left;
+      padding-left: 20px;
+      margin: 12px 0 5px 0;
+      color: #d1d1d1;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .instructions-list li {
+      margin-bottom: 8px;
+    }
+    .instructions-list strong {
+      color: #00e676;
+    }
+
     .slider-group { margin: 12px 0; text-align: left; }
     .slider-group label { display: block; font-size: 0.9rem; margin-bottom: 4px; }
     .slider-group span.val-highlight { color: #00e676; font-weight: bold; }
@@ -103,6 +119,21 @@
     <button class="btn btn-conn" onclick="conectarBLE()">Conectar</button>
     <button class="btn btn-disconn" onclick="desconectarBLE()">Desconectar</button>
   </div>
+
+  <!-- INSTRUCCIONES DE USO (DESPLEGABLE) -->
+  <details class="card">
+    <summary>📋 Instrucciones de Uso</summary>
+    <div class="panel-body">
+      <ol class="instructions-list">
+        <li><strong>Conexión:</strong> Presionar el botón de <em>Conectar</em> y seleccionar el dispositivo (<strong>PerroRobot_ESP32</strong>).</li>
+        <li><strong>Animaciones:</strong> Presionar la animación deseada en la sección de <em>Animaciones Continuas</em> (pueden estar varias activas simultáneamente).</li>
+        <li><strong>Detener Animación:</strong> El botón <em>OFF</em> sirve para detener únicamente la animación seleccionada.</li>
+        <li><strong>Ladear Cabeza:</strong> Si se desea que la cabeza se incline lateralmente, presionar alguno de los dos botones de <em>Ladear (IZQ. o DER.)</em>.</li>
+        <li><strong>Centrar Cabeza:</strong> Para volver a centrar la cabeza a su posición neutra, presionar el botón <em>Centrar Cabeza</em>.</li>
+        <li><strong>Mantenimiento:</strong> Las secciones de <em>Calibración de Centro (Offsets)</em> y <em>Giro Manual (Relativo)</em> son opciones avanzadas reservadas para casos de mantenimiento y ajustes finos.</li>
+      </ol>
+    </div>
+  </details>
 
   <div class="card">
     <h2>Parada de Emergencia</h2>
