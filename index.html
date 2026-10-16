@@ -170,8 +170,8 @@
 
   <div class="card">
     <h2>Posturas de Cabeza</h2>
-    <button class="btn" onclick="enviar('ladeari')">Ladear Izq (77°)</button>
-    <button class="btn" onclick="enviar('ladeard')">Ladear Der (103°)</button><br>
+    <button class="btn" onclick="enviar('ladeari')">Ladear Izq (60°)</button>
+    <button class="btn" onclick="enviar('ladeard')">Ladear Der (120°)</button><br>
     <button class="btn" style="width: 90%; margin-top: 8px;" onclick="enviar('0ladear')">Centrar Cabeza (90°)</button>
   </div>
 
@@ -186,15 +186,15 @@
         </div>
         <div>
           <label>Centro Cuello (°):</label>
-          <input type="number" id="cCuello" value="120" min="0" max="180">
+          <input type="number" id="cCuello" value="90" min="0" max="180">
         </div>
         <div>
           <label>Centro Cabeza 1 (S3):</label>
-          <input type="number" id="cS3" value="85" min="0" max="180">
+          <input type="number" id="cS3" value="90" min="0" max="180">
         </div>
         <div>
           <label>Centro Cabeza 2 (S4):</label>
-          <input type="number" id="cS4" value="95" min="0" max="180">
+          <input type="number" id="cS4" value="90" min="0" max="180">
         </div>
       </div>
       <button class="btn btn-confirm" onclick="confirmarCentro()">Confirmar Centro</button>
@@ -211,7 +211,7 @@
       </div>
 
       <div class="slider-group">
-        <label>Cuello: <span id="vCuello" class="val-highlight">0°</span> <small id="vCuelloAbs">(Abs: 120°)</small></label>
+        <label>Cuello: <span id="vCuello" class="val-highlight">0°</span> <small id="vCuelloAbs">(Abs: 90°)</small></label>
         <input type="range" id="sCuello" value="0" oninput="actualizarLabelCuello()">
       </div>
 
@@ -236,11 +236,11 @@
     let bluetoothDevice;
     let rxCharacteristic;
 
-    // Centros activos registrados
+    // Centros activos registrados (todos inicializados en 90°)
     let centroCola = 90;
-    let centroCuello = 120;
-    let centroS3 = 85;
-    let centroS4 = 95;
+    let centroCuello = 90;
+    let centroS3 = 90;
+    let centroS4 = 90;
 
     window.onload = function() {
       recalcularLimitesSliders();
@@ -296,9 +296,9 @@
 
     function confirmarCentro() {
       centroCola = parseInt(document.getElementById('cCola').value) || 90;
-      centroCuello = parseInt(document.getElementById('cCuello').value) || 120;
-      centroS3 = parseInt(document.getElementById('cS3').value) || 85;
-      centroS4 = parseInt(document.getElementById('cS4').value) || 95;
+      centroCuello = parseInt(document.getElementById('cCuello').value) || 90;
+      centroS3 = parseInt(document.getElementById('cS3').value) || 90;
+      centroS4 = parseInt(document.getElementById('cS4').value) || 90;
 
       recalcularLimitesSliders();
 
