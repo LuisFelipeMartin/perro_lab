@@ -99,6 +99,18 @@
       line-height: 1.4;
     }
 
+    .alert-ios {
+      background: #b71c1c;
+      color: #ffffff;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 0.88rem;
+      display: none;
+      text-align: left;
+      line-height: 1.4;
+    }
+
     .slider-group { margin: 12px 0; text-align: left; }
     .slider-group label { display: block; font-size: 0.9rem; margin-bottom: 4px; }
     .slider-group span.val-highlight { color: #00e676; font-weight: bold; }
@@ -112,6 +124,12 @@
 <body>
 
   <h1>Perro Robot Control</h1>
+  
+  <!-- ALERTA EXCLUSIVA PARA iOS / NAVEGADORES SIN WEB BLUETOOTH -->
+  <div id="iosAlert" class="alert-ios">
+    ⚠️ <strong>Navegador no compatible con Web Bluetooth:</strong> Si estás en iPhone/iPad (iOS), abre esta página utilizando la App gratuita <strong>Bluefy – Web BLE Browser</strong> desde la App Store.
+  </div>
+
   <div id="status" class="status">Desconectado</div>
   
   <div>
@@ -124,11 +142,12 @@
     <summary>📋 Instrucciones de Uso</summary>
     <div class="panel-body">
       <ol class="instructions-list">
-        <li><strong>Conectar:</strong> Presionar <em>Conectar</em> y seleccionar <strong>PerroRobot_ESP32</strong> (un solo dispositivo conectado a la vez).</li>
-        <li><strong>Desconectar:</strong> Desvincula el Bluetooth del perro de forma limpia.</li>
+        <li><strong>Conectar:</strong> Presionar <em>Conectar</em> y seleccionar <strong>PerroRobot_ESP32</strong>.</li>
+        <li><strong>Desconectar:</strong> Desvincula el Bluetooth de forma limpia.</li>
+        <li><strong>Usuarios de iOS (iPhone/iPad):</strong> Deben usar el navegador gratuito <strong>Bluefy</strong> descargable de la App Store para poder conectarse por Bluetooth.</li>
         <li><strong>Parada de Emergencia:</strong> El botón <em>¡DETENER TODO!</em> frena inmediatamente los motores.</li>
-        <li><strong>Animaciones Continuas:</strong> Activa o desactiva las animaciones cíclicas de <em>Cola</em>, <em>Rotar Cuello</em> o <em>Asentir (Inclinación)</em>.</li>
-        <li><strong>Posturas Estáticas:</strong> Permite fijar poses directas como <em>Ladear (Izq/Der)</em> y <em>Mirar (Izq/Der)</em>. Para volver a la posición neutra pulsa <em>Centrar Cabeza</em>.</li>
+        <li><strong>Animaciones Continuas:</strong> Activa o desactiva las animaciones de <em>Cola</em>, <em>Rotar Cuello</em> o <em>Asentir</em>.</li>
+        <li><strong>Posturas Estáticas:</strong> Posiciones fijas como <em>Ladear</em> o <em>Mirar</em>. Pulsa <em>Centrar Cabeza</em> para volver al centro.</li>
       </ol>
       <div class="note-box">
         💡 <strong>Requisitos:</strong> Conexión Wi-Fi para cargar la aplicación web y fuente externa de 5V bien conectada para alimentar los motores.
@@ -223,13 +242,16 @@
     let bluetoothDevice;
     let rxCharacteristic;
 
-    // Valores calibrados por defecto
     let centroCola = 90;
     let centroCuello = 90;
     let centroS3 = 31;
     let centroS4 = 68;
 
     window.onload = function() {
+      // Verificar si el navegador soporta Web Bluetooth
+      if (!navigator.bluetooth) {
+        document.getElementById('iosAlert').style.display = 'block';
+      }
       recalcularLimitesSliders();
     };
 
@@ -292,6 +314,10 @@
     }
 
     async function conectarBLE() {
+      if (!navigator.bluetooth) {
+        alert("Tu navegador actual no soporta Web Bluetooth. En iPhone/iPad debes usar la app gratuita 'Bluefy'.");
+        return;
+      }
       try {
         const statusDiv = document.getElementById('status');
         statusDiv.innerText = "Buscando ESP32...";
