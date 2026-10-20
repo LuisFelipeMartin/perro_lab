@@ -21,10 +21,10 @@
       background-color: #1e88e5;
       color: white;
       border: none;
-      padding: 12px 20px;
+      padding: 12px 18px;
       margin: 5px;
       border-radius: 8px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: bold;
       cursor: pointer;
       width: 42%;
@@ -81,7 +81,7 @@
       padding-left: 20px;
       margin: 12px 0 10px 0;
       color: #d1d1d1;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       line-height: 1.5;
     }
     .instructions-list li { margin-bottom: 8px; }
@@ -99,19 +99,33 @@
       line-height: 1.4;
     }
 
+    .alert-ios {
+      background: #b71c1c;
+      color: #ffffff;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 0.88rem;
+      display: none;
+      text-align: left;
+      line-height: 1.4;
+    }
+
     .slider-group { margin: 12px 0; text-align: left; }
     .slider-group label { display: block; font-size: 0.9rem; margin-bottom: 4px; }
     .slider-group span.val-highlight { color: #00e676; font-weight: bold; }
-    input[type=range], input[type=number] { width: 100%; box-sizing: border-box; }
-    
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; }
-    .grid-2 label { font-size: 0.85rem; }
-    .grid-2 input { padding: 8px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 0.95rem; }
+    input[type=range] { width: 100%; box-sizing: border-box; }
   </style>
 </head>
 <body>
 
   <h1>Perro Robot Control</h1>
+  
+  <!-- ALERTA EXCLUSIVA PARA iOS -->
+  <div id="iosAlert" class="alert-ios">
+    ⚠️ <strong>Navegador no compatible con Web Bluetooth:</strong> Si estás en iPhone/iPad (iOS), abre esta página utilizando la App gratuita <strong>Bluefy – Web BLE Browser</strong> desde la App Store.
+  </div>
+
   <div id="status" class="status">Desconectado</div>
   
   <div>
@@ -124,14 +138,16 @@
     <summary>📋 Instrucciones de Uso</summary>
     <div class="panel-body">
       <ol class="instructions-list">
-        <li><strong>Conectar:</strong> Presionar el botón de <em>Conectar</em> y seleccionar el dispositivo (<strong>PerroRobot_ESP32</strong>). <em>Nota: Solo un dispositivo puede estar conectado al tiempo.</em></li>
-        <li><strong>Desconectar:</strong> El botón de <em>Desconectar</em> desvincula la conexión BLE de forma limpia.</li>
-        <li><strong>Parada de Emergencia:</strong> El botón rojo de <em>¡DETENER TODO!</em> frena inmediatamente todas las animaciones.</li>
-        <li><strong>Animaciones Continuas:</strong> Presionar la animación deseada en su respectiva sección.</li>
-        <li><strong>Prueba de Límites (10°-170°):</strong> Utilizar esta sección desplegable para probar individualmente el rango físico seguro de cada servo.</li>
+        <li><strong>Conectar:</strong> Presionar <em>Conectar</em> y seleccionar <strong>PerroRobot_ESP32</strong>.</li>
+        <li><strong>Desconectar:</strong> Desvincula el Bluetooth de forma limpia.</li>
+        <li><strong>iOS (iPhone/iPad):</strong> Debes abrir esta web dentro de la app gratuita <strong>Bluefy</strong>.</li>
+        <li><strong>Parada de Emergencia:</strong> El botón <em>¡DETENER TODO!</em> frena inmediatamente los motores.</li>
+        <li><strong>Animaciones Continuas:</strong> Activa o desactiva los movimientos cíclicos de <em>Cola</em>, <em>Rotar Cuello</em> o <em>Asentir</em>.</li>
+        <li><strong>Posturas Estáticas:</strong> Posturas fijas como <em>Ladear</em> o <em>Mirar</em>. Pulsa <em>Centrar Cabeza</em> para regresar a la posición neutra.</li>
+        <li><strong>Control Individual:</strong> Ajusta libremente el ángulo directo de cada servo (10° a 170°).</li>
       </ol>
       <div class="note-box">
-        💡 <strong>Requisitos:</strong> Conexión a Internet / Wi-Fi para abrir la app y fuente externa de 5V bien conectada para alimentar los servos y el ESP32.
+        💡 <strong>Requisitos:</strong> Conexión Wi-Fi para cargar la web y fuente externa de 5V conectada para alimentar los motores.
       </div>
     </div>
   </details>
@@ -141,104 +157,56 @@
     <button class="btn btn-stop" onclick="enviar('0')">¡DETENER TODO!</button>
   </div>
 
-  <!-- NUEVA SECCIÓN: PRUEBA DE LÍMITES FÍSICOS (10° a 170°) -->
-  <details class="card" open>
-    <summary>🧪 Prueba de Límites Físicos (10° - 170°)</summary>
-    <div class="panel-body">
-      <p style="font-size:0.85rem; color:#aaa; text-align:left; margin-top:0;">
-        Mueve cada slider para probar individualmente la posición exacta de cada servo entre 10° y 170°. Anota los valores donde tu estructura física llegue a su límite.
-      </p>
-
-      <div class="slider-group">
-        <label>Servo 1 - Cola (Canal 0): <span id="vTest0" class="val-highlight">90°</span></label>
-        <input type="range" id="t0" min="10" max="170" value="90" oninput="probarServo(0, this.value)">
-      </div>
-
-      <div class="slider-group">
-        <label>Servo 2 - Cuello (Canal 1): <span id="vTest1" class="val-highlight">90°</span></label>
-        <input type="range" id="t1" min="10" max="170" value="90" oninput="probarServo(1, this.value)">
-      </div>
-
-      <div class="slider-group">
-        <label>Servo 3 - Cabeza Izq S3 (Canal 2): <span id="vTest2" class="val-highlight">90°</span></label>
-        <input type="range" id="t2" min="10" max="170" value="90" oninput="probarServo(2, this.value)">
-      </div>
-
-      <div class="slider-group">
-        <label>Servo 4 - Cabeza Der S4 (Canal 3): <span id="vTest3" class="val-highlight">90°</span></label>
-        <input type="range" id="t3" min="10" max="170" value="90" oninput="probarServo(3, this.value)">
-      </div>
-    </div>
-  </details>
-
+  <!-- ANIMACIONES CONTINUAS -->
   <div class="card">
     <h2>Animaciones Continuas</h2>
     <button class="btn" onclick="enviar('cola')">Cola ON</button>
     <button class="btn" onclick="enviar('0cola')">Cola OFF</button><br>
-    <button class="btn" onclick="enviar('cuello')">Cuello ON</button>
+    <button class="btn" onclick="enviar('cuello')">Rotar Cuello ON</button>
     <button class="btn" onclick="enviar('0cuello')">Cuello OFF</button><br>
     <button class="btn" onclick="enviar('asentir')">Asentir ON</button>
     <button class="btn" onclick="enviar('0asentir')">Asentir OFF</button>
   </div>
 
+  <!-- POSTURAS ESTÁTICAS DE CABEZA -->
   <div class="card">
-    <h2>Posturas de Cabeza</h2>
-    <button class="btn" onclick="enviar('ladeari')">Ladear Izq (60°)</button>
-    <button class="btn" onclick="enviar('ladeard')">Ladear Der (120°)</button><br>
-    <button class="btn" style="width: 90%; margin-top: 8px;" onclick="enviar('0ladear')">Centrar Cabeza (90°)</button>
+    <h2>Posturas Estáticas</h2>
+    <button class="btn" onclick="enviar('ladeari')">Ladear Izq</button>
+    <button class="btn" onclick="enviar('ladeard')">Ladear Der</button><br>
+    <button class="btn" onclick="enviar('mirari')">Mirar Izq</button>
+    <button class="btn" onclick="enviar('mirard')">Mirar Der</button><br>
+    <button class="btn" style="width: 90%; margin-top: 8px;" onclick="enviar('0ladear')">Centrar Cabeza</button>
   </div>
 
-  <!-- CALIBRACIÓN DE CENTROS -->
-  <details class="card">
-    <summary>⚙️ Calibración de Centros (Offsets)</summary>
+  <!-- SECCIÓN DESPLEGABLE: CONTROL INDIVIDUAL DE SERVOS (POSICIÓN LIBRE) -->
+  <details class="card" open>
+    <summary>🎛️ Control Individual de Servos</summary>
     <div class="panel-body">
-      <div class="grid-2">
-        <div>
-          <label>Centro Cola (°):</label>
-          <input type="number" id="cCola" value="90" min="10" max="170">
-        </div>
-        <div>
-          <label>Centro Cuello (°):</label>
-          <input type="number" id="cCuello" value="90" min="10" max="170">
-        </div>
-        <div>
-          <label>Centro Cabeza 1 (S3):</label>
-          <input type="number" id="cS3" value="90" min="10" max="170">
-        </div>
-        <div>
-          <label>Centro Cabeza 2 (S4):</label>
-          <input type="number" id="cS4" value="90" min="10" max="170">
-        </div>
-      </div>
-      <button class="btn btn-confirm" onclick="confirmarCentro()">Confirmar Centro</button>
-    </div>
-  </details>
+      <p style="font-size:0.85rem; color:#aaa; text-align:left; margin-top:0;">
+        Mueve libremente cualquier servo a la posición deseada en tiempo real (10° a 170°):
+      </p>
 
-  <!-- MODO MANUAL RELATIVO -->
-  <details class="card">
-    <summary>🎛️ Giro Manual (Relativo)</summary>
-    <div class="panel-body">
       <div class="slider-group">
-        <label>Cola: <span id="vCola" class="val-highlight">0°</span> <small id="vColaAbs">(Abs: 90°)</small></label>
-        <input type="range" id="sCola" value="0" oninput="actualizarLabelCola()">
+        <label>Servo 1 - Cola (Canal 0): <span id="vS1" class="val-highlight">90°</span></label>
+        <input type="range" id="s1" min="10" max="170" value="90" oninput="moverServoDirecto(0, this.value)">
       </div>
 
       <div class="slider-group">
-        <label>Cuello: <span id="vCuello" class="val-highlight">0°</span> <small id="vCuelloAbs">(Abs: 90°)</small></label>
-        <input type="range" id="sCuello" value="0" oninput="actualizarLabelCuello()">
+        <label>Servo 2 - Cuello (Canal 1): <span id="vS2" class="val-highlight">90°</span></label>
+        <input type="range" id="s2" min="10" max="170" value="90" oninput="moverServoDirecto(1, this.value)">
       </div>
 
       <div class="slider-group">
-        <label>Pitch (Inclinación): <span id="vPitch" class="val-highlight">0°</span> <small id="vPitchAbs">(Abs: 90°)</small></label>
-        <input type="range" id="sPitch" min="-30" max="30" value="0" oninput="actualizarLabelPitch()">
+        <label>Servo 3 - Cabeza 1 / S3 (Canal 2): <span id="vS3" class="val-highlight">34°</span></label>
+        <input type="range" id="s3" min="10" max="170" value="34" oninput="moverServoDirecto(2, this.value)">
       </div>
 
       <div class="slider-group">
-        <label>Roll (Giro): <span id="vRoll" class="val-highlight">0°</span> <small id="vRollAbs">(Abs: 90°)</small></label>
-        <input type="range" id="sRoll" min="-30" max="30" value="0" oninput="actualizarLabelRoll()">
+        <label>Servo 4 - Cabeza 2 / S4 (Canal 3): <span id="vS4" class="val-highlight">64°</span></label>
+        <input type="range" id="s4" min="10" max="170" value="64" oninput="moverServoDirecto(3, this.value)">
       </div>
 
-      <button class="btn" style="width: 90%; margin-top: 10px;" onclick="enviarManual()">Enviar Posición Manual</button>
+      <button class="btn btn-confirm" onclick="restablecerPosicionInicial()">Restablecer Posición Inicial</button>
     </div>
   </details>
 
@@ -249,81 +217,32 @@
     let bluetoothDevice;
     let rxCharacteristic;
 
-    let centroCola = 90;
-    let centroCuello = 90;
-    let centroS3 = 90;
-    let centroS4 = 90;
-
     window.onload = function() {
-      recalcularLimitesSliders();
+      // Detección de soporte Web Bluetooth para iOS
+      if (!navigator.bluetooth) {
+        document.getElementById('iosAlert').style.display = 'block';
+      }
     };
 
-    function recalcularLimitesSliders() {
-      const sCola = document.getElementById('sCola');
-      sCola.min = 10 - centroCola;
-      sCola.max = 170 - centroCola;
-      sCola.value = 0;
-
-      const sCuello = document.getElementById('sCuello');
-      sCuello.min = 10 - centroCuello;
-      sCuello.max = 170 - centroCuello;
-      sCuello.value = 0;
-
-      document.getElementById('sPitch').value = 0;
-      document.getElementById('sRoll').value = 0;
-
-      actualizarLabelCola();
-      actualizarLabelCuello();
-      actualizarLabelPitch();
-      actualizarLabelRoll();
-    }
-
-    function probarServo(canal, valor) {
-      document.getElementById(`vTest${canal}`).innerText = valor + "°";
+    function moverServoDirecto(canal, valor) {
+      const labels = ['vS1', 'vS2', 'vS3', 'vS4'];
+      document.getElementById(labels[canal]).innerText = valor + "°";
       enviar(`s,${canal},${valor}`);
     }
 
-    function actualizarLabelCola() {
-      const rel = parseInt(document.getElementById('sCola').value);
-      const abs = centroCola + rel;
-      document.getElementById('vCola').innerText = (rel > 0 ? "+" + rel : rel) + "°";
-      document.getElementById('vColaAbs').innerText = `(Abs: ${abs}°)`;
-    }
-
-    function actualizarLabelCuello() {
-      const rel = parseInt(document.getElementById('sCuello').value);
-      const abs = centroCuello + rel;
-      document.getElementById('vCuello').innerText = (rel > 0 ? "+" + rel : rel) + "°";
-      document.getElementById('vCuelloAbs').innerText = `(Abs: ${abs}°)`;
-    }
-
-    function actualizarLabelPitch() {
-      const rel = parseInt(document.getElementById('sPitch').value);
-      const abs = 90 + rel;
-      document.getElementById('vPitch').innerText = (rel > 0 ? "+" + rel : rel) + "°";
-      document.getElementById('vPitchAbs').innerText = `(Abs: ${abs}°)`;
-    }
-
-    function actualizarLabelRoll() {
-      const rel = parseInt(document.getElementById('sRoll').value);
-      const abs = 90 + rel;
-      document.getElementById('vRoll').innerText = (rel > 0 ? "+" + rel : rel) + "°";
-      document.getElementById('vRollAbs').innerText = `(Abs: ${abs}°)`;
-    }
-
-    function confirmarCentro() {
-      centroCola = parseInt(document.getElementById('cCola').value) || 90;
-      centroCuello = parseInt(document.getElementById('cCuello').value) || 90;
-      centroS3 = parseInt(document.getElementById('cS3').value) || 90;
-      centroS4 = parseInt(document.getElementById('cS4').value) || 90;
-
-      recalcularLimitesSliders();
-
-      const cmd = `center,${centroCola},${centroCuello},${centroS3},${centroS4}`;
-      enviar(cmd);
+    function restablecerPosicionInicial() {
+      document.getElementById('s1').value = 90; document.getElementById('vS1').innerText = "90°";
+      document.getElementById('s2').value = 90; document.getElementById('vS2').innerText = "90°";
+      document.getElementById('s3').value = 34; document.getElementById('vS3').innerText = "34°";
+      document.getElementById('s4').value = 64; document.getElementById('vS4').innerText = "64°";
+      enviar('0ladear');
     }
 
     async function conectarBLE() {
+      if (!navigator.bluetooth) {
+        alert("Tu navegador no soporta Web Bluetooth. Si usas iPhone/iPad abre la app gratuita 'Bluefy'.");
+        return;
+      }
       try {
         const statusDiv = document.getElementById('status');
         statusDiv.innerText = "Buscando ESP32...";
@@ -373,21 +292,6 @@
       } catch (error) {
         console.error("Error al enviar comando:", error);
       }
-    }
-
-    function enviarManual() {
-      const relCola = parseInt(document.getElementById('sCola').value);
-      const relCuello = parseInt(document.getElementById('sCuello').value);
-      const relPitch = parseInt(document.getElementById('sPitch').value);
-      const relRoll = parseInt(document.getElementById('sRoll').value);
-
-      const absCola = centroCola + relCola;
-      const absCuello = centroCuello + relCuello;
-      const absPitch = 90 + relPitch;
-      const absRoll = 90 + relRoll;
-
-      const cmd = `${absCola},${absCuello},${absPitch},${absRoll},30`;
-      enviar(cmd);
     }
   </script>
 </body>
