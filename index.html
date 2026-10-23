@@ -147,7 +147,7 @@
         <li><strong>Control Individual:</strong> Ajusta libremente el ángulo directo de cada servo (10° a 170°).</li>
       </ol>
       <div class="note-box">
-        💡 <strong>Requisitos:</strong> Conexión Wi-Fi para cargar la web y fuente externa de 5V conectada para alimentar los motores.
+        💡 <strong>Requisitos:</strong> Conexión HTTPS para Web Bluetooth y fuente externa de 5V conectada a la bornera verde del driver.
       </div>
     </div>
   </details>
@@ -197,13 +197,13 @@
       </div>
 
       <div class="slider-group">
-        <label>Servo 3 - Cabeza 1 / S3 (Canal 2): <span id="vS3" class="val-highlight">34°</span></label>
-        <input type="range" id="s3" min="10" max="170" value="34" oninput="moverServoDirecto(2, this.value)">
+        <label>Servo 3 - Cabeza 1 / S3 (Canal 2): <span id="vS3" class="val-highlight">49°</span></label>
+        <input type="range" id="s3" min="10" max="170" value="49" oninput="moverServoDirecto(2, this.value)">
       </div>
 
       <div class="slider-group">
-        <label>Servo 4 - Cabeza 2 / S4 (Canal 3): <span id="vS4" class="val-highlight">64°</span></label>
-        <input type="range" id="s4" min="10" max="170" value="64" oninput="moverServoDirecto(3, this.value)">
+        <label>Servo 4 - Cabeza 2 / S4 (Canal 3): <span id="vS4" class="val-highlight">91°</span></label>
+        <input type="range" id="s4" min="10" max="170" value="91" oninput="moverServoDirecto(3, this.value)">
       </div>
 
       <button class="btn btn-confirm" onclick="restablecerPosicionInicial()">Restablecer Posición Inicial</button>
@@ -233,8 +233,8 @@
     function restablecerPosicionInicial() {
       document.getElementById('s1').value = 90; document.getElementById('vS1').innerText = "90°";
       document.getElementById('s2').value = 90; document.getElementById('vS2').innerText = "90°";
-      document.getElementById('s3').value = 34; document.getElementById('vS3').innerText = "34°";
-      document.getElementById('s4').value = 64; document.getElementById('vS4').innerText = "64°";
+      document.getElementById('s3').value = 49; document.getElementById('vS3').innerText = "49°";
+      document.getElementById('s4').value = 91; document.getElementById('vS4').innerText = "91°";
       enviar('0ladear');
     }
 
