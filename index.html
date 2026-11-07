@@ -133,21 +133,21 @@
     <button class="btn btn-disconn" onclick="desconectarBLE()">Desconectar</button>
   </div>
 
-  <!-- INSTRUCCIONES DE USO -->
+  <!-- INSTRUCCIONES DE USO ACTUALIZADAS -->
   <details class="card">
     <summary>📋 Instrucciones de Uso</summary>
     <div class="panel-body">
       <ol class="instructions-list">
-        <li><strong>Conectar:</strong> Presionar <em>Conectar</em> y seleccionar <strong>PerroRobot_ESP32</strong>.</li>
-        <li><strong>Desconectar:</strong> Desvincula el Bluetooth y libera la tensión en los motores.</li>
+        <li><strong>Conectar:</strong> Presionar <em>Conectar</em> y seleccionar <strong>PerroRobot_ESP32</strong>. El robot adoptará automáticamente la pose HOME (S1:90°, S2:90°, S3:73°, S4:112°).</li>
+        <li><strong>Desconectar:</strong> Desvincula el Bluetooth y corta la energía PWM de los servos para evitar sobrecalentamiento.</li>
         <li><strong>iOS (iPhone/iPad):</strong> Debes abrir esta web dentro de la app gratuita <strong>Bluefy</strong>.</li>
-        <li><strong>Parada de Emergencia:</strong> El botón <em>¡DETENER TODO!</em> frena inmediatamente los motores.</li>
-        <li><strong>Animaciones Continuas:</strong> Activa o desactiva los movimientos cíclicos de <em>Cola</em>, <em>Rotar Cuello</em> o <em>Asentir</em>.</li>
-        <li><strong>Posturas Estáticas:</strong> Posturas fijas como <em>Ladear</em> o <em>Mirar</em>. Pulsa <em>Centrar Cabeza</em> para regresar a la posición neutra.</li>
+        <li><strong>Parada de Emergencia:</strong> El botón <em>¡DETENER TODO!</em> apaga inmediatamente el torque de los motores.</li>
+        <li><strong>Animaciones Continuas:</strong> Activa o desactiva los movimientos orgánicos de <em>Cola</em>, <em>Rotar Cuello</em> o <em>Asentir</em>.</li>
+        <li><strong>Posturas Estáticas:</strong> Ejecuta posturas fijas como <em>Ladear</em> o <em>Mirar</em>. Pulsa <em>Centrar Cabeza</em> para regresar a la postura neutra.</li>
         <li><strong>Control Individual:</strong> Ajusta libremente el ángulo directo de cada servo (10° a 170°).</li>
       </ol>
       <div class="note-box">
-        💡 <strong>Requisitos:</strong> Conexión HTTPS para Web Bluetooth y fuente externa de 5V conectada a la bornera verde del driver.
+        💡 <strong>Requisitos de Alimentación:</strong> Conectar fuente externa de 5V (mínimo 3A) en la bornera verde del PCA9685. El pin de 5V del shield de la ESP32 debe compartir GND y V+ con el driver.
       </div>
     </div>
   </details>
@@ -178,7 +178,7 @@
     <button class="btn" style="width: 90%; margin-top: 8px;" onclick="enviar('0ladear')">Centrar Cabeza</button>
   </div>
 
-  <!-- SECCIÓN DESPLEGABLE: CONTROL INDIVIDUAL DE SERVOS -->
+  <!-- CONTROL INDIVIDUAL DE SERVOS -->
   <details class="card" open>
     <summary>🎛️ Control Individual de Servos</summary>
     <div class="panel-body">
@@ -197,13 +197,13 @@
       </div>
 
       <div class="slider-group">
-        <label>Servo 3 - Cabeza 1 / S3 (Canal 2): <span id="vS3" class="val-highlight">111°</span></label>
-        <input type="range" id="s3" min="10" max="170" value="111" oninput="moverServoDirecto(2, this.value)">
+        <label>Servo 3 - Cabeza 1 / S3 (Canal 2): <span id="vS3" class="val-highlight">73°</span></label>
+        <input type="range" id="s3" min="10" max="170" value="73" oninput="moverServoDirecto(2, this.value)">
       </div>
 
       <div class="slider-group">
-        <label>Servo 4 - Cabeza 2 / S4 (Canal 3): <span id="vS4" class="val-highlight">117°</span></label>
-        <input type="range" id="s4" min="10" max="170" value="117" oninput="moverServoDirecto(3, this.value)">
+        <label>Servo 4 - Cabeza 2 / S4 (Canal 3): <span id="vS4" class="val-highlight">112°</span></label>
+        <input type="range" id="s4" min="10" max="170" value="112" oninput="moverServoDirecto(3, this.value)">
       </div>
 
       <button class="btn btn-confirm" onclick="restablecerPosicionInicial()">Restablecer Posición Inicial</button>
@@ -230,10 +230,10 @@
     }
 
     function restablecerPosicionInicial() {
-      document.getElementById('s1').value = 90; document.getElementById('vS1').innerText = "90°";
-      document.getElementById('s2').value = 90; document.getElementById('vS2').innerText = "90°";
-      document.getElementById('s3').value = 111; document.getElementById('vS3').innerText = "111°";
-      document.getElementById('s4').value = 117; document.getElementById('vS4').innerText = "117°";
+      document.getElementById('s1').value = 90;  document.getElementById('vS1').innerText = "90°";
+      document.getElementById('s2').value = 90;  document.getElementById('vS2').innerText = "90°";
+      document.getElementById('s3').value = 73;  document.getElementById('vS3').innerText = "73°";
+      document.getElementById('s4').value = 112; document.getElementById('vS4').innerText = "112°";
       enviar('0ladear');
     }
 
